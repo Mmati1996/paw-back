@@ -1,4 +1,4 @@
-/*
+
 package com.example.back.services;
 
 import com.example.back.models.User;
@@ -16,7 +16,7 @@ public class UserServiceImpl implements UserService{
 
 
     @Override
-    public User getId(int id) {
+    public User getUserById(int id) {
         return userRepository.findById(id).get();
     }
 
@@ -30,4 +30,3 @@ public class UserServiceImpl implements UserService{
         return userRepository.findById(id).get().getPassword();
     }
 }
-*/
