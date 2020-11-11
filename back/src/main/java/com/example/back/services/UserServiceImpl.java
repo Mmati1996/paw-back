@@ -3,14 +3,17 @@ package com.example.back.services;
 
 import com.example.back.models.User;
 import com.example.back.repositories.UserRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserServiceImpl implements UserService{
 
-     UserRepository userRepository;
+     private UserRepository userRepository;
 
+    public UserServiceImpl() {
+    }
 
-
-    public UserServiceImpl(UserService userService){
+    public UserServiceImpl(UserRepository userRepository){
         this.userRepository = userRepository;
     }
 
@@ -29,4 +32,12 @@ public class UserServiceImpl implements UserService{
     public String getPassword(int id) {
         return userRepository.findById(id).get().getPassword();
     }
+
+    @Override
+    public void addUser(User user) {
+        userRepository.save(user);
+    }
+
+
+
 }
