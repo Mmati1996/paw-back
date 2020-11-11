@@ -36,8 +36,8 @@ public class DataController {
         }
 
         @PostMapping("/register")
-        public ResponseEntity addUser(@RequestParam String username,@RequestParam String password){
-        User user = new User(username,password);
+        public ResponseEntity addUser(@RequestBody User user){
+        //User user = new User(username,password);
         userRepository.save(user);
         //service.addUser(user);
         return new ResponseEntity("added",HttpStatus.OK);
