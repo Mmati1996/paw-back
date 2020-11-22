@@ -6,8 +6,9 @@ import com.example.back.services.UserServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Base64;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -17,6 +18,8 @@ public class DataController {
     UserRepository userRepository;
     //http://localhost:8080/user?id=1
 
+    private static final SecureRandom secureRandom = new SecureRandom(); //threadsafe
+    private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder(); //threadsafe
 
     private UserServiceImpl service;
 
@@ -45,16 +48,27 @@ public class DataController {
         return new ResponseEntity("added",HttpStatus.OK);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity login (@RequestParam String login){
-        ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
-        for ( User user : users  ){
-            if((user.getLogin()).equals(login)){
-                //generate token here
-                return new ResponseEntity("token",HttpStatus.OK);
+        @PostMapping("/login")
+        public ResponseEntity login (@RequestParam String login, @RequestParam String password){
+            ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
+            for ( User user : users  ){
+             if((user.getLogin()).equals(login)){
+                   if ((user.getPassword()).equals(password)){
+                       getUser(user.getId()).setToken(generateNewToken());
+                       userRepository.save(user);
+                        //generate token here
+                     return new ResponseEntity(user.getToken(),HttpStatus.OK);
+                   }
+                        return new ResponseEntity("wrong password",HttpStatus.UNAUTHORIZED);
+             }
             }
-        }
-        return new ResponseEntity("no user found",HttpStatus.NOT_FOUND);
+            return new ResponseEntity("no user found",HttpStatus.NOT_FOUND);
+    }
+
+    public static String generateNewToken() {
+        byte[] randomBytes = new byte[24];
+        secureRandom.nextBytes(randomBytes);
+        return base64Encoder.encodeToString(randomBytes);
     }
 
 }
