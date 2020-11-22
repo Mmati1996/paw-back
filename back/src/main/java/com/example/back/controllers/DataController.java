@@ -69,7 +69,7 @@ public class DataController {
         ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
         for ( User user : users  ){
             if (user.getToken().equals(token)){
-                user.setToken("");
+                user.setToken(null);
                 userRepository.save(user);
                 return new ResponseEntity("success",HttpStatus.OK);
             }
