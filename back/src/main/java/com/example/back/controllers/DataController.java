@@ -1,14 +1,14 @@
 package com.example.back.controllers;
 
         import com.example.back.models.User;
-        import com.example.back.repositories.UserRepository;
-        import com.example.back.services.UserServiceImpl;
-        import org.springframework.http.HttpStatus;
-        import org.springframework.http.ResponseEntity;
-        import org.springframework.web.bind.annotation.*;
-        import java.security.SecureRandom;
-        import java.util.ArrayList;
-        import java.util.Base64;
+import com.example.back.repositories.UserRepository;
+import com.example.back.responseModels.Response;
+import com.example.back.services.UserServiceImpl;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Base64;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -41,40 +41,40 @@ public class DataController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity addUser(@RequestBody User user){
+    public Response addUser(@RequestBody User user){
         //User user = new User(username,password);
         userRepository.save(user);
         //service.addUser(user);
-        return new ResponseEntity("added",HttpStatus.OK);
+        return new Response (true,"added","");
     }
 
     @PostMapping("/login")
-    public ResponseEntity login (@RequestParam String login, @RequestParam String password){
+    public Response login (@RequestParam String login, @RequestParam String password){
         ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
         for ( User user : users  ){
             if((user.getLogin()).equals(login)){
                 if ((user.getPassword()).equals(password)){
                     getUser(user.getId()).setToken(generateNewToken());
                     userRepository.save(user);
-                    return new ResponseEntity(user.getToken(),HttpStatus.OK);
+                    return new Response(true,user.getToken(),"");//loged in
                 }
-                return new ResponseEntity("wrong password",HttpStatus.UNAUTHORIZED);
+                return new Response(false,"","wrong password");// wrong password, couldn't log in
             }
         }
-        return new ResponseEntity("no user found",HttpStatus.NOT_FOUND);
+        return new Response(false,"","no user found");//no user, couldnt log in
     }
 
     @PostMapping("/logout")
-    public ResponseEntity logout (@RequestParam String token){
+    public Response logout (@RequestParam String token){
         ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
         for ( User user : users  ){
             if (user.getToken().equals(token)){
                 user.setToken(null);
                 userRepository.save(user);
-                return new ResponseEntity("success",HttpStatus.OK);
+                return new Response(true,"","");//logged out successfully
             }
         }
-        return new ResponseEntity("wrong token",HttpStatus.NOT_FOUND);
+        return new Response(false,"","wrong token");//couldn't log out, token not found
     }
 
 
