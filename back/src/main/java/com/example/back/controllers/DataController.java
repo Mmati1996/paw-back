@@ -43,4 +43,9 @@ public class DataController {
         return new ResponseEntity("added",HttpStatus.OK);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity login (@RequestParam String login){
+        return new ResponseEntity("no user found",HttpStatus.BAD_REQUEST);
+    }
+
 }

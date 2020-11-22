@@ -5,6 +5,8 @@ import com.example.back.models.User;
 import com.example.back.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 @Service
 public class UserServiceImpl implements UserService{
 
@@ -21,6 +23,16 @@ public class UserServiceImpl implements UserService{
     @Override
     public User getUserById(int id) {
         return userRepository.findById(id).get();
+    }
+
+    public User getUserByLogin(String login){
+        ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
+        for (User user : users){
+            if (  (user.getLogin()).equals(login)  ){
+                return user;
+            }
+        }
+        return null;
     }
 
     @Override
