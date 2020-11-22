@@ -19,6 +19,7 @@ public class User {
     private Integer id;
     private String login;
     private String password;
+    public String token;
 
     // == constructors ==
     public User(){

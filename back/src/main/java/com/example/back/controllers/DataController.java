@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+
 @RestController
 @CrossOrigin(origins = "*")
 public class DataController {
@@ -45,7 +47,14 @@ public class DataController {
 
     @PostMapping("/login")
     public ResponseEntity login (@RequestParam String login){
-        return new ResponseEntity("no user found",HttpStatus.BAD_REQUEST);
+        ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
+        for ( User user : users  ){
+            if((user.getLogin()).equals(login)){
+                //generate token here
+                return new ResponseEntity("token",HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity("no user found",HttpStatus.NOT_FOUND);
     }
 
 }
