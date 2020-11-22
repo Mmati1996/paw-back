@@ -64,7 +64,7 @@ public class DataController {
         return new ResponseEntity("no user found",HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping
+    @PostMapping("/logout")
     public ResponseEntity logout (@RequestParam String token){
         ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
         for ( User user : users  ){
