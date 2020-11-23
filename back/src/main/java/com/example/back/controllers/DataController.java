@@ -42,6 +42,12 @@ public class DataController {
 
     @PostMapping("/register")
     public Response addUser(@RequestBody User user){
+        ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
+        for ( User us : users  ){
+            if (us.getLogin().equals(user.getLogin()));{
+                return new Response (false,"","login already exists");
+            }
+        }
         //User user = new User(username,password);
         userRepository.save(user);
         //service.addUser(user);
