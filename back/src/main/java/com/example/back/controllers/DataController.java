@@ -2,7 +2,9 @@ package com.example.back.controllers;
 
         import com.example.back.models.User;
 import com.example.back.repositories.UserRepository;
-import com.example.back.responseModels.Response;
+        import com.example.back.responseModels.LoginMsg;
+        import com.example.back.responseModels.LogoutMsg;
+        import com.example.back.responseModels.Response;
 import com.example.back.services.UserServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,7 +51,9 @@ public class DataController {
     }
 
     @PostMapping("/login")
-    public Response login (@RequestParam String login, @RequestParam String password){
+    public Response login (@RequestBody LoginMsg msg){
+        String login = msg.getLogin();
+        String password = msg.getPassword();
         ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
         for ( User user : users  ){
             if((user.getLogin()).equals(login)){
@@ -65,10 +69,11 @@ public class DataController {
     }
 
     @PostMapping("/logout")
-    public Response logout (@RequestParam String token){
+    public Response logout (@RequestBody LogoutMsg msg){
+
         ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
         for ( User user : users  ){
-            if (user.getToken().equals(token)){
+            if (user.getToken().equals(msg.getToken())){
                 user.setToken(null);
                 userRepository.save(user);
                 return new Response(true,"","");//logged out successfully
