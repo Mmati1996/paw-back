@@ -2,10 +2,8 @@ package com.example.back.controllers;
 
         import com.example.back.models.User;
 import com.example.back.repositories.UserRepository;
-        import com.example.back.responseModels.LoginMsg;
-        import com.example.back.responseModels.LogoutMsg;
-        import com.example.back.responseModels.Response;
-import com.example.back.services.UserServiceImpl;
+        import com.example.back.responseModels.*;
+        import com.example.back.services.UserServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.SecureRandom;
@@ -51,7 +49,7 @@ public class DataController {
     }
 
     @PostMapping("/login")
-    public Response login (@RequestBody LoginMsg msg){
+    public LoginResponse login (@RequestBody LoginMsg msg){
         String login = msg.getLogin();
         String password = msg.getPassword();
         ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
@@ -60,12 +58,12 @@ public class DataController {
                 if ((user.getPassword()).equals(password)){
                     getUser(user.getId()).setToken(generateNewToken());
                     userRepository.save(user);
-                    return new Response(true,user.getToken(),"");//loged in
+                    return new LoginResponse(true,new Token(user.getToken()),"");//loged in
                 }
-                return new Response(false,"","wrong password");// wrong password, couldn't log in
+                return new LoginResponse(false,null,"wrong password");// wrong password, couldn't log in
             }
         }
-        return new Response(false,"","no user found");//no user, couldnt log in
+        return new LoginResponse(false,null,"no user found");//no user, couldnt log in
     }
 
     @PostMapping("/logout")
