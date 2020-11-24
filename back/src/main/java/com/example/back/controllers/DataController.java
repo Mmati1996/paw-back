@@ -1,6 +1,10 @@
 package com.example.back.controllers;
 
+import com.example.back.models.Id;
+import com.example.back.models.Table;
 import com.example.back.models.User;
+import com.example.back.repositories.IdsRepository;
+import com.example.back.repositories.TableRepository;
 import com.example.back.repositories.UserRepository;
 import com.example.back.responseModels.*;
 import com.example.back.services.UserServiceImpl;
@@ -16,16 +20,20 @@ public class DataController {
 
     //TODO -- change repository to service
     UserRepository userRepository;
+    TableRepository tableRepository;
+    IdsRepository idsRepository;
 
 
     private static final SecureRandom secureRandom = new SecureRandom(); //threadsafe
     private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder(); //threadsafe
 
-    private UserServiceImpl service;
+    private UserServiceImpl userService;
 
-    public DataController(UserServiceImpl service, UserRepository userRepository) {
-        this.service = service;
+    public DataController(UserServiceImpl service, UserRepository userRepository, TableRepository tableRepository,IdsRepository idsRepository) {
+        this.userService = service;
         this.userRepository = userRepository;
+        this.tableRepository = tableRepository;
+        this.idsRepository =  idsRepository;
     }
 
 
@@ -93,4 +101,33 @@ public class DataController {
         return base64Encoder.encodeToString(randomBytes);
     }
 
+    @GetMapping("/tables/all")
+    public Iterable<Table> getAllTables(){
+        return tableRepository.findAll();
+    }
+
+    @PostMapping("tables/add")
+    public Response addTable(@RequestParam String token, @RequestParam String tableName){
+        Table table = new Table(tableName);
+        User user = findUserByToken(token);
+        if (user != null){
+            tableRepository.save(table);
+            idsRepository.save(new Id(user.getId(),table.getId()));
+            return new Response(true,"user added","");
+        }
+        return new Response(false,"","wrong token");
+    }
+
+
+    public User findUserByToken(String token){
+        ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
+        for ( User us : users  ){
+            if (us.getToken()!=null){
+                if (us.getToken().equals(token)){
+                    return us;
+                }
+            }
+        }
+        return null;
+    }
 }
