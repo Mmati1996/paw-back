@@ -16,7 +16,7 @@ public class DataController {
 
     //TODO -- change repository to service
     UserRepository userRepository;
-    //http://localhost:8080/user?id=1
+
 
     private static final SecureRandom secureRandom = new SecureRandom(); //threadsafe
     private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder(); //threadsafe

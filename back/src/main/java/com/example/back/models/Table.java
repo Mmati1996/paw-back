@@ -6,11 +6,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.util.ArrayList;
 
 @Data
 @Entity
-@javax.persistence.Table(name="tables")
+@javax.persistence.Table(name="tablice")
 public class Table {
 
     @Id
@@ -18,12 +17,16 @@ public class Table {
     int id;
     String name;
 
-
+    // == constructors ==
     public Table(int id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public Table(ArrayList<User> users) {
+    public Table(){
+    }
+
+    public Table(String name) {
+        this.name = name;
     }
 }

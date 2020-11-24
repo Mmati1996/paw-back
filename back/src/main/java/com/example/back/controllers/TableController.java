@@ -15,7 +15,7 @@ public class TableController {
     public TableController(TableRepository repository) {
         this.tableRepository = repository;
     }
-
+    
     @GetMapping("/tables/all")
     public Iterable<Table> getAllTables(){
         return tableRepository.findAll();
