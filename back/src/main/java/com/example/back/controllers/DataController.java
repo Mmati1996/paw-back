@@ -1,9 +1,9 @@
 package com.example.back.controllers;
 
-        import com.example.back.models.User;
+import com.example.back.models.User;
 import com.example.back.repositories.UserRepository;
-        import com.example.back.responseModels.*;
-        import com.example.back.services.UserServiceImpl;
+import com.example.back.responseModels.*;
+import com.example.back.services.UserServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.SecureRandom;
