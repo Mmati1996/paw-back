@@ -155,16 +155,17 @@ public class DataController {
 
 
     @PostMapping("/userByToken")
-    public User findUserByTokenRequest(@RequestBody String token){
+    public Response findUserByTokenRequest(@RequestBody String token){
         ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
         for ( User us : users  ){
             if (us.getToken()!=null){
                 if (us.getToken().equals(token)){
-                    return us;
+                    return new Response(true,us.getLogin(),"");
+
                 }
             }
         }
-        return null;
+        return new Response(false,"","no user found");
     }
 
     @PostMapping("/tables/add")//tableName
