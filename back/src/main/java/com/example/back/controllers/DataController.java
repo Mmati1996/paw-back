@@ -167,7 +167,7 @@ public class DataController {
         return null;
     }
 
-    @PostMapping("tables/add")//tableName
+    @PostMapping("/tables/add")//tableName
     public Response addTable(@RequestHeader String token, @RequestParam String param1){
 
         Table table = new Table(param1);
@@ -180,7 +180,7 @@ public class DataController {
         return new Response(false,"","wrong token");
     }
 
-    @PostMapping("tables/delete")//tableName
+    @PostMapping("/tables/delete")//tableName
     public Response deleteTable (@RequestHeader String token, @RequestParam String param1){
         Table table = findTableByName(param1);
         if (canTableBeAccessed(token, param1)){
@@ -197,7 +197,7 @@ public class DataController {
         return new Response(false,"","this user cannot access given table");
     }
 
-    @PostMapping("tables/changeName")//tableToChange newName
+    @PostMapping("/tables/changeName")//tableToChange newName
     public Response ChangeTableName(@RequestHeader String token, @RequestBody Message message){
         if( !canTableBeAccessed(token,message.getParam1() ) ){
             return new Response(false,"","this user cannot access given table");
@@ -208,7 +208,7 @@ public class DataController {
         return  new Response(true,"changed name to "+message.getParam2(),"");
     }
 
-    @PostMapping("tables/addUser")//table userToAdd(login)
+    @PostMapping("/tables/addUser")//table userToAdd(login)
     public Response addUserToTable(@RequestHeader String token,@RequestBody Message message){
         if (canTableBeAccessed(token,message.getParam1())){
              idRepository.save( new Id (findUserByLogin(message.getParam2()).getId(),findTableByName(message.getParam1()).getId())  );
@@ -217,7 +217,7 @@ public class DataController {
         return new Response (false,"","this user cannot access given table");
     }
 
-    @PostMapping("tables/deleteUser")//table user(login)
+    @PostMapping("/tables/deleteUser")//table user(login)
     public Response deleteUser(@RequestHeader String token, @RequestBody Message message){
         if (!canTableBeAccessed(token,message.getParam1())){
             return new Response(false,"","this user cannot access given table");
