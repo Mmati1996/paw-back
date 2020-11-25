@@ -155,11 +155,11 @@ public class DataController {
 
 
     @PostMapping("/userByToken")
-    public Response findUserByTokenRequest(@RequestBody String token){
+    public Response findUserByTokenRequest(@RequestBody ShortMessage token){
         ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
         for ( User us : users  ){
             if (us.getToken()!=null){
-                if (us.getToken().equals(token)){
+                if (us.getToken().equals(token.getParam1())){
                     return new Response(true,us.getLogin(),"");
 
                 }
