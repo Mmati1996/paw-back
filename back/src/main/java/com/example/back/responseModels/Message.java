@@ -12,4 +12,8 @@ public class Message {
         this.param1 = par1;
         this.param2 = par2;
     }
+
+    public Message(){
+        
+    }
 }

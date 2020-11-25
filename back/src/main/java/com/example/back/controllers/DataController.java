@@ -169,9 +169,9 @@ public class DataController {
     }
 
     @PostMapping("/tables/add")//tableName
-    public Response addTable(@RequestHeader String token, @RequestParam String param1){
+    public Response addTable(@RequestHeader String token, @RequestBody ShortMessage message){
 
-        Table table = new Table(param1);
+        Table table = new Table(message.getParam1());
         User user = findUserByToken(token);
         if (user != null){
             tableRepository.save(table);
@@ -182,9 +182,9 @@ public class DataController {
     }
 
     @PostMapping("/tables/delete")//tableName
-    public Response deleteTable (@RequestHeader String token, @RequestParam String param1){
-        Table table = findTableByName(param1);
-        if (canTableBeAccessed(token, param1)){
+    public Response deleteTable (@RequestHeader String token, @RequestBody ShortMessage message){
+        Table table = findTableByName(message.getParam1());
+        if (canTableBeAccessed(token, message.getParam1())){
             ArrayList<Id> ids = (ArrayList<Id>) idRepository.findAll();
             for (Id id : ids){
                 if (id.getTable_id()==table.getId()){
