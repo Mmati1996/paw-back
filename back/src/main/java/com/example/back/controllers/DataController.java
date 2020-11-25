@@ -154,7 +154,7 @@ public class DataController {
     }
 
 
-    @PutMapping("/userByToken")
+    @PostMapping("/userByToken")
     public User findUserByTokenRequest(@RequestBody String token){
         ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
         for ( User us : users  ){
