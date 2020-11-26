@@ -153,7 +153,6 @@ public class DataController {
         return false;
     }
 
-
     @PostMapping("/userByToken")
     public Response findUserByTokenRequest(@RequestBody ShortMessage token){
         ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
@@ -231,5 +230,21 @@ public class DataController {
             }
         }
         return new Response(false,message.getParam2()+" does not have acces to "+message.getParam1()+" so it cant be deleted","");
+    }
+
+    @GetMapping("/userTables")
+    public Iterable<Table> getUserTables(@RequestHeader String token){
+        ArrayList <Table> tables = new ArrayList<Table>();
+        User user = findUserByToken(token);
+        for (Id ids : idRepository.findAll()){
+            if (ids.getUser_id() == user.getId()){
+                for (Table tabs : tableRepository.findAll()){
+                    if (ids.getTable_id() == tabs.getId()){
+                        tables.add(tabs);
+                    }
+                }
+            }
+        }
+        return tables;
     }
 }
