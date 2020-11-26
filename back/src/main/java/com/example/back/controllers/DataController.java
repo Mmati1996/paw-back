@@ -258,4 +258,16 @@ public class DataController {
         }
         return null;
     }
+
+    @GetMapping("/tables/getByName")
+    public Table getTableByName(@RequestBody ShortMessage message){
+        for (Table tab : tableRepository.findAll()){
+            if (message.getParam1().equals(tab.getName()) ){
+                return tab;
+            }
+
+        }
+        return null;
+    }
+
 }
