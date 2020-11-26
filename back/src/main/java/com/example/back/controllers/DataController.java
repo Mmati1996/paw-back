@@ -247,4 +247,15 @@ public class DataController {
         }
         return tables;
     }
+
+    @GetMapping("/tables/getById")
+    public Table getTableById(@RequestBody ShortMessage message){
+        for (Table tab : tableRepository.findAll()){
+            if (Integer.valueOf(message.getParam1()) == tab.getId() ){
+                return tab;
+            }
+
+        }
+        return null;
+    }
 }
