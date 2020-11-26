@@ -248,7 +248,7 @@ public class DataController {
         return tables;
     }
 
-    @GetMapping("/tables/getById")
+    @PostMapping("/tables/getById")
     public Table getTableById(@RequestBody ShortMessage message){
         for (Table tab : tableRepository.findAll()){
             if (Integer.valueOf(message.getParam1()) == tab.getId() ){
@@ -259,7 +259,7 @@ public class DataController {
         return null;
     }
 
-    @GetMapping("/tables/getByName")
+    @PostMapping("/tables/getByName")
     public Table getTableByName(@RequestBody ShortMessage message){
         for (Table tab : tableRepository.findAll()){
             if (message.getParam1().equals(tab.getName()) ){
