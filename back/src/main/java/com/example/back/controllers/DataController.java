@@ -213,7 +213,7 @@ public class DataController {
     public Response addUserToTable(@RequestHeader String token,@RequestBody Message message){
         if (canTableBeAccessed(token,message.getParam1())){
              idRepository.save( new Id (findUserByLogin(message.getParam2()).getId(),findTableByName(message.getParam1()).getId())  );
-            return new Response (false,"user added","");
+            return new Response (true,"user added","");
         }
         return new Response (false,"","this user cannot access given table");
     }
