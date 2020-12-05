@@ -197,6 +197,7 @@ public class DataController {
         return new Response(false,"","this user cannot access given table");
     }
 
+    // TODO ma przesyłać id, chcemy mieć możliwość robienie takich samych tablicd
     @PostMapping("/tables/changeName")//tableToChange newName
     public Response ChangeTableName(@RequestHeader String token, @RequestBody Message message){
         if( !canTableBeAccessed(token,message.getParam1() ) ){
@@ -259,6 +260,7 @@ public class DataController {
         return null;
     }
 
+    //TODO do zmiany (chyba?) nie chcemy przyjmować nazwy tylko id
     @PostMapping("/tables/getByName")
     public Table getTableByName(@RequestBody ShortMessage message){
         for (Table tab : tableRepository.findAll()){
@@ -271,3 +273,13 @@ public class DataController {
     }
 
 }
+
+    //TODO przemodelować tabele?
+    //TODO request w którym zwracam wszystkie listy boardu
+    //TODO request w którym dostaje id tablicy i zwracam (id tablicy, nazwe tablicy, obiekty listy)
+    //TODO standardowe requesty do listy
+    //TODO obiekt listy: id, nazwa, lista kart?
+
+
+
+
