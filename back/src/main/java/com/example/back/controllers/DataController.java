@@ -278,7 +278,6 @@ public class DataController {
     //TODO request w którym zwracam wszystkie listy boardu
     //TODO request w którym dostaje id tablicy i zwracam (id tablicy, nazwe tablicy, obiekty listy)
     //TODO standardowe requesty do listy
-    //TODO obiekt listy: id, nazwa, lista kart?
 
 
 
