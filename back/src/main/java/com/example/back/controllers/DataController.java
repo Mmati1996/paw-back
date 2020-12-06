@@ -119,10 +119,10 @@ public class DataController {
         return null;
     }
 
-    public Table findTableByName(String name){
+    public Table findTableById(int id){
         ArrayList<Table> tables = (ArrayList<Table>) tableRepository.findAll();
         for (Table tab : tables){
-            if (tab.getName().equals(name)){
+            if (tab.getId()== id){
                 return tab;
             }
 
@@ -139,8 +139,8 @@ public class DataController {
         return null;
     }
 
-    public boolean canTableBeAccessed(String token, String tableName){
-        Table table = findTableByName(tableName);
+    public boolean canTableBeAccessed(String token, int tableId){
+        Table table = findTableById(tableId);
         if ( table==null ){
             return false;
         }
@@ -182,8 +182,8 @@ public class DataController {
 
     @PostMapping("/tables/delete")//tableName
     public Response deleteTable (@RequestHeader String token, @RequestBody ShortMessage message){
-        Table table = findTableByName(message.getParam1());
-        if (canTableBeAccessed(token, message.getParam1())){
+        Table table = findTableById(Integer.valueOf(message.getParam1()));
+        if (canTableBeAccessed(token, (Integer.valueOf(message.getParam1())) )){
             ArrayList<Id> ids = (ArrayList<Id>) idRepository.findAll();
             for (Id id : ids){
                 if (id.getTable_id()==table.getId()){
@@ -195,43 +195,42 @@ public class DataController {
             return new Response(true,"deleted","");
         }
         return new Response(false,"","this user cannot access given table");
-    }
-
-    // TODO ma przesyłać id, chcemy mieć możliwość robienie takich samych tablicd
-    @PostMapping("/tables/changeName")//tableToChange newName
+    }//tableId
+    
+    @PostMapping("/tables/changeName")//tableToChangeId newName
     public Response ChangeTableName(@RequestHeader String token, @RequestBody Message message){
-        if( !canTableBeAccessed(token,message.getParam1() ) ){
+        if( !canTableBeAccessed(token,Integer.valueOf(message.getParam1()))){
             return new Response(false,"","this user cannot access given table");
         }
-        Table tab = findTableByName(message.getParam1());
+        Table tab = findTableById(Integer.valueOf(message.getParam1()));
         tab.setName(message.getParam2());
         tableRepository.save(tab);
         return  new Response(true,"changed name to "+message.getParam2(),"");
-    }
+    }//tableId  tableName
 
     @PostMapping("/tables/addUser")//table userToAdd(login)
     public Response addUserToTable(@RequestHeader String token,@RequestBody Message message){
-        if (canTableBeAccessed(token,message.getParam1())){
-             idRepository.save( new Id (findUserByLogin(message.getParam2()).getId(),findTableByName(message.getParam1()).getId())  );
+        if (canTableBeAccessed(token,Integer.valueOf(message.getParam1()))){
+             idRepository.save( new Id (findUserByLogin(message.getParam2()).getId(),findTableById(Integer.valueOf(message.getParam1())).getId())  );
             return new Response (true,"user added","");
         }
         return new Response (false,"","this user cannot access given table");
-    }
+    }//tableId loginOfUserToAdd
 
     @PostMapping("/tables/deleteUser")//table user(login)
     public Response deleteUser(@RequestHeader String token, @RequestBody Message message){
-        if (!canTableBeAccessed(token,message.getParam1())){
+        if (!canTableBeAccessed(token,Integer.valueOf(message.getParam1()))){
             return new Response(false,"","this user cannot access given table");
         }
         int id = findUserByLogin(message.getParam2()).getId();
         for (Id ids : idRepository.findAll()){
-            if ( (ids.getUser_id() == id) &&  ( ids.getTable_id() == findTableByName(message.getParam1()).getId() ) ){
+            if ( (ids.getUser_id() == id) &&  ( ids.getTable_id() == findTableById(Integer.valueOf(message.getParam1())).getId() ) ){
                 idRepository.delete(ids);
                 return new Response(true,"user " + message.getParam2() +" deleted from "+message.getParam1(),"");
             }
         }
         return new Response(false,message.getParam2()+" does not have acces to "+message.getParam1()+" so it cant be deleted","");
-    }
+    }//tableId userToDeleteName
 
     @GetMapping("/userTables")
     public Iterable<Table> getUserTables(@RequestHeader String token){
@@ -272,9 +271,12 @@ public class DataController {
         return null;
     }
 
+    //@PostMapping("lists/addlist")
+    //public Response addList(@RequestHeader String token, @RequestBody Message message){
+    //}//list name + table name
 }
 
-    //TODO przemodelować tabele?
+
     //TODO request w którym zwracam wszystkie listy boardu
     //TODO request w którym dostaje id tablicy i zwracam (id tablicy, nazwe tablicy, obiekty listy)
     //TODO standardowe requesty do listy
