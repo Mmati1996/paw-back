@@ -2,10 +2,9 @@ package com.example.back.controllers;
 
 import com.example.back.models.Id;
 import com.example.back.models.Table;
+import com.example.back.models.TrelloList;
 import com.example.back.models.User;
-import com.example.back.repositories.IdsRepository;
-import com.example.back.repositories.TableRepository;
-import com.example.back.repositories.UserRepository;
+import com.example.back.repositories.*;
 import com.example.back.responseModels.*;
 import com.example.back.services.UserServiceImpl;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +21,8 @@ public class DataController {
     UserRepository userRepository;
     TableRepository tableRepository;
     IdsRepository idRepository;
+    TrelloListRepository trelloListRepository;
+    CardRepository cardRepository;
 
 
     private static final SecureRandom secureRandom = new SecureRandom(); //threadsafe
@@ -29,11 +30,13 @@ public class DataController {
 
     private UserServiceImpl userService;
 
-    public DataController(UserServiceImpl service, UserRepository userRepository, TableRepository tableRepository,IdsRepository idRepository) {
+    public DataController(UserServiceImpl service, UserRepository userRepository, TableRepository tableRepository,IdsRepository idRepository,TrelloListRepository trelloListRepository, CardRepository cardRepository) {
         this.userService = service;
         this.userRepository = userRepository;
         this.tableRepository = tableRepository;
         this.idRepository = idRepository;
+        this.trelloListRepository = trelloListRepository;
+        this.cardRepository = cardRepository;
     }
 
 
@@ -153,6 +156,20 @@ public class DataController {
         return false;
     }
 
+    public TrelloList findListById(int id){
+        ArrayList<TrelloList> lists = (ArrayList<TrelloList>) trelloListRepository.findAll();
+        for (TrelloList tl : lists){
+            if (tl.getId() == id){
+                return tl;
+            }
+        }
+        return null;
+    }
+
+    public boolean canListBeAccessed(String token, int listId){
+        return canTableBeAccessed(token, findTableById(findListById(listId).getTable_id()).getId() );
+    }
+
     @PostMapping("/userByToken")
     public Response findUserByTokenRequest(@RequestBody ShortMessage token){
         ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
@@ -167,7 +184,7 @@ public class DataController {
         return new Response(false,"","no user found");
     }
 
-    @PostMapping("/tables/add")//tableName
+    @PostMapping("/tables/add")
     public Response addTable(@RequestHeader String token, @RequestBody ShortMessage message){
 
         Table table = new Table(message.getParam1());
@@ -178,9 +195,9 @@ public class DataController {
             return new Response(true,"added","");
         }
         return new Response(false,"","wrong token");
-    }
+    }//tableName
 
-    @PostMapping("/tables/delete")//tableName
+    @PostMapping("/tables/delete")
     public Response deleteTable (@RequestHeader String token, @RequestBody ShortMessage message){
         Table table = findTableById(Integer.valueOf(message.getParam1()));
         if (canTableBeAccessed(token, (Integer.valueOf(message.getParam1())) )){
@@ -197,7 +214,7 @@ public class DataController {
         return new Response(false,"","this user cannot access given table");
     }//tableId
 
-    @PostMapping("/tables/changeName")//tableToChangeId newName
+    @PostMapping("/tables/changeName")
     public Response ChangeTableName(@RequestHeader String token, @RequestBody Message message){
         if( !canTableBeAccessed(token,Integer.valueOf(message.getParam1()))){
             return new Response(false,"","this user cannot access given table");
@@ -208,7 +225,7 @@ public class DataController {
         return  new Response(true,"changed name to "+message.getParam2(),"");
     }//tableId  tableName
 
-    @PostMapping("/tables/addUser")//table userToAdd(login)
+    @PostMapping("/tables/addUser")
     public Response addUserToTable(@RequestHeader String token,@RequestBody Message message){
         if (canTableBeAccessed(token,Integer.valueOf(message.getParam1()))){
              idRepository.save( new Id (findUserByLogin(message.getParam2()).getId(),findTableById(Integer.valueOf(message.getParam1())).getId())  );
@@ -217,7 +234,7 @@ public class DataController {
         return new Response (false,"","this user cannot access given table");
     }//tableId loginOfUserToAdd
 
-    @PostMapping("/tables/deleteUser")//table user(login)
+    @PostMapping("/tables/deleteUser")
     public Response deleteUser(@RequestHeader String token, @RequestBody Message message){
         if (!canTableBeAccessed(token,Integer.valueOf(message.getParam1()))){
             return new Response(false,"","this user cannot access given table");
@@ -271,15 +288,55 @@ public class DataController {
         return null;
     }
 
-    //@PostMapping("lists/addlist")
-    //public Response addList(@RequestHeader String token, @RequestBody Message message){
-    //}//list name + table name
+    @GetMapping("/trelloLists/all")
+    public Iterable<TrelloList> getAllLists(){
+        return trelloListRepository.findAll();
+    }
+
+    @PostMapping("/lists/add")
+    public Response addList(@RequestHeader String token, @RequestBody Message message){
+        User user = findUserByToken(token);
+            if(user == null){
+                return new Response(false,"","no user found");
+            }
+        if (canTableBeAccessed(token,Integer.valueOf(message.getParam1()))){
+            TrelloList list = new TrelloList(message.getParam2(),Integer.valueOf(message.getParam1()));
+            trelloListRepository.save(list);
+        }return new Response(false,"","user nie ma dostepu do tablicy");
+    }//tableId, listName
+
+    @PostMapping("lists/delete")
+    public Response deleteList(@RequestHeader String token, @RequestBody ShortMessage message){
+        TrelloList list = findListById(Integer.valueOf(message.getParam1()));
+        if (canListBeAccessed(token,Integer.valueOf(message.getParam1()))){
+            ArrayList<TrelloList> lists = (ArrayList<TrelloList>)trelloListRepository.findAll();
+            for (TrelloList tl : lists){
+                if (tl.getId() == Integer.valueOf(message.getParam1())){
+                    trelloListRepository.delete(tl);
+                    return new Response(true, "list deleted","");
+                }
+            }
+        }
+        return new Response(false,"","user cannot access given table");
+    }//listId
+
+    @PostMapping("list/changeName")
+    public Response changeListName(@RequestHeader String token,@RequestBody Message message){
+        if (!( canListBeAccessed(token,Integer.valueOf(message.getParam1())) )){
+            return new Response(false,"","user cannot access list");
+        }
+        TrelloList list = findListById(Integer.valueOf(message.getParam1()));
+        list.setName(message.getParam2());
+        trelloListRepository.save(list);
+        return new Response(true,"changed name to "+message.getParam2(),"");
+    }//listId listNewName
+
 }
 
 
     //TODO request w którym zwracam wszystkie listy boardu
     //TODO request w którym dostaje id tablicy i zwracam (id tablicy, nazwe tablicy, obiekty listy)
-    //TODO standardowe requesty do listy
+
 
 
 

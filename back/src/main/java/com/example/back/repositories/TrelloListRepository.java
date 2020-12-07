@@ -1,9 +1,9 @@
 package com.example.back.repositories;
 
-import com.example.back.models.Card;
+import com.example.back.models.TrelloList;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CardRepository extends JpaRepository<Card,Integer> {
+public interface TrelloListRepository extends JpaRepository<TrelloList, Integer> {
 }
