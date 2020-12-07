@@ -196,7 +196,7 @@ public class DataController {
         }
         return new Response(false,"","this user cannot access given table");
     }//tableId
-    
+
     @PostMapping("/tables/changeName")//tableToChangeId newName
     public Response ChangeTableName(@RequestHeader String token, @RequestBody Message message){
         if( !canTableBeAccessed(token,Integer.valueOf(message.getParam1()))){
