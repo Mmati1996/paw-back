@@ -288,6 +288,7 @@ public class DataController {
         return null;
     }
 
+
     @GetMapping("/trelloLists/all")
     public Iterable<TrelloList> getAllLists(){
         return trelloListRepository.findAll();
@@ -305,7 +306,7 @@ public class DataController {
         }return new Response(false,"","user nie ma dostepu do tablicy");
     }//tableId, listName
 
-    @PostMapping("lists/delete")
+    @PostMapping("/lists/delete")
     public Response deleteList(@RequestHeader String token, @RequestBody ShortMessage message){
         TrelloList list = findListById(Integer.valueOf(message.getParam1()));
         if (canListBeAccessed(token,Integer.valueOf(message.getParam1()))){
@@ -320,7 +321,7 @@ public class DataController {
         return new Response(false,"","user cannot access given table");
     }//listId
 
-    @PostMapping("list/changeName")
+    @PostMapping("/list/changeName")
     public Response changeListName(@RequestHeader String token,@RequestBody Message message){
         if (!( canListBeAccessed(token,Integer.valueOf(message.getParam1())) )){
             return new Response(false,"","user cannot access list");
@@ -331,11 +332,19 @@ public class DataController {
         return new Response(true,"changed name to "+message.getParam2(),"");
     }//listId listNewName
 
+    @GetMapping("/lists")
+    public Iterable<Integer> getTablesLists(@RequestParam int id){
+        ArrayList<Integer> toReturn = new ArrayList<Integer>();
+        for (TrelloList tl : trelloListRepository.findAll()){
+            if (tl.getTable_id() == id){
+                toReturn.add(tl.getId());
+            }
+        }
+        return toReturn;
+    }
+
 }
 
-
-    //TODO request w którym zwracam wszystkie listy boardu
-    //TODO request w którym dostaje id tablicy i zwracam (id tablicy, nazwe tablicy, obiekty listy)
 
 
 
