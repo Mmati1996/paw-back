@@ -204,6 +204,11 @@ public class DataController {
             ArrayList<Id> ids = (ArrayList<Id>) idRepository.findAll();
             for (Id id : ids){
                 if (id.getTable_id()==table.getId()){
+                    for (TrelloList tl : (ArrayList<TrelloList>) trelloListRepository.findAll()){
+                        if (tl.getTable_id()==table.getId()){
+                            trelloListRepository.delete(tl);
+                        }
+                    }
                     idRepository.delete(id);
                 }
 
@@ -341,6 +346,7 @@ public class DataController {
         }
         return toReturn;
     }//table_id
+
 
     //TODO edycja nazwy karty
     //TODO dodawanie daty do karty
