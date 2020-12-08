@@ -331,11 +331,11 @@ public class DataController {
         return new Response(true,"changed name to "+message.getParam2(),"");
     }//listId listNewName
 
-    @GetMapping("/lists")
-    public Iterable<TrelloList> getTablesLists(@RequestParam int id){
+    @PostMapping("/lists")
+    public Iterable<TrelloList> getTablesLists(@RequestBody ShortMessage message){
         ArrayList<TrelloList> toReturn = new ArrayList<TrelloList>();
         for (TrelloList tl : trelloListRepository.findAll()){
-            if (tl.getTable_id() == id){
+            if (tl.getTable_id() == Integer.valueOf(message.getParam1())){
                 toReturn.add(tl);
             }
         }
