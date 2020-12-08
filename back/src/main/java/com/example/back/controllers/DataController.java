@@ -400,6 +400,17 @@ public class DataController {
      }
 
 
+     @GetMapping("/cards/list")
+     public Iterable<Card> listCards(@RequestParam int id){
+        ArrayList<Card> cards = new ArrayList<>();
+        for (Card c : cardRepository.findAll()){
+            if(c.getId() == id){
+                cards.add(c);
+            }
+        }
+        return cards;
+     }
+
     @PostMapping("/card/add")
     public Response addCard(@RequestHeader String token, @RequestBody Message message){
         User user = findUserByToken(token);
@@ -425,7 +436,7 @@ public class DataController {
             }
         }
         return new Response (false,"","user cannot access it");
-    }//listId
+    }//cardId
 
     @PostMapping("/card/changeName")
     public Response changeCardName (@RequestHeader String token, @RequestBody Message message){
