@@ -308,7 +308,6 @@ public class DataController {
 
     @PostMapping("/lists/delete")
     public Response deleteList(@RequestHeader String token, @RequestBody ShortMessage message){
-        TrelloList list = findListById(Integer.valueOf(message.getParam1()));
         if (canListBeAccessed(token,Integer.valueOf(message.getParam1()))){
             ArrayList<TrelloList> lists = (ArrayList<TrelloList>)trelloListRepository.findAll();
             for (TrelloList tl : lists){
@@ -318,7 +317,7 @@ public class DataController {
                 }
             }
         }
-        return new Response(false,"","user cannot access given table");
+        return new Response(false,"","user cannot access given list");
     }//listId
 
     @PostMapping("/list/changeName")
@@ -333,15 +332,22 @@ public class DataController {
     }//listId listNewName
 
     @GetMapping("/lists")
-    public Iterable<Integer> getTablesLists(@RequestParam int id){
-        ArrayList<Integer> toReturn = new ArrayList<Integer>();
+    public Iterable<TrelloList> getTablesLists(@RequestParam int id){
+        ArrayList<TrelloList> toReturn = new ArrayList<TrelloList>();
         for (TrelloList tl : trelloListRepository.findAll()){
             if (tl.getTable_id() == id){
-                toReturn.add(tl.getId());
+                toReturn.add(tl);
             }
         }
         return toReturn;
-    }
+    }//table_id
+
+    //TODO edycja nazwy karty
+    //TODO dodawanie daty do karty
+    //TODO udostepnianie tablicy?
+    //TODO dodawanie karty
+    //TODO usuwanie karty
+    //TODO zmiana nazwy karty
 
 }
 
