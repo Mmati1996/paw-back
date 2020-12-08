@@ -214,7 +214,7 @@ public class DataController {
         return new Response(false,"","this user cannot access given table");
     }//tableId
 
-    @PostMapping("/tables/changeName")
+    @PutMapping("/tables/changeName")
     public Response ChangeTableName(@RequestHeader String token, @RequestBody Message message){
         if( !canTableBeAccessed(token,Integer.valueOf(message.getParam1()))){
             return new Response(false,"","this user cannot access given table");
@@ -320,7 +320,7 @@ public class DataController {
         return new Response(false,"","user cannot access given list");
     }//listId
 
-    @PostMapping("/list/changeName")
+    @PutMapping("/list/changeName")
     public Response changeListName(@RequestHeader String token,@RequestBody Message message){
         if (!( canListBeAccessed(token,Integer.valueOf(message.getParam1())) )){
             return new Response(false,"","user cannot access list");
