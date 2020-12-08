@@ -1,18 +1,20 @@
 package com.example.back.controllers;
 
-import com.example.back.models.Id;
-import com.example.back.models.Table;
-import com.example.back.models.TrelloList;
-import com.example.back.models.User;
+import com.example.back.models.*;
 import com.example.back.repositories.*;
 import com.example.back.responseModels.*;
 import com.example.back.services.UserServiceImpl;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Base64;
 
+
+@Slf4j
 @RestController
 @CrossOrigin(origins = "*")
 public class DataController {
@@ -23,6 +25,7 @@ public class DataController {
     IdsRepository idRepository;
     TrelloListRepository trelloListRepository;
     CardRepository cardRepository;
+    final static Logger logger = LoggerFactory.getLogger(DataController.class);
 
 
     private static final SecureRandom secureRandom = new SecureRandom(); //threadsafe
@@ -144,6 +147,9 @@ public class DataController {
 
     public boolean canTableBeAccessed(String token, int tableId){
         Table table = findTableById(tableId);
+        if (findUserByToken(token)==null){
+            return false;
+        }
         if ( table==null ){
             return false;
         }
@@ -168,6 +174,20 @@ public class DataController {
 
     public boolean canListBeAccessed(String token, int listId){
         return canTableBeAccessed(token, findTableById(findListById(listId).getTable_id()).getId() );
+    }
+
+    public Card findCardById(int id){
+        ArrayList<Card> cards = (ArrayList<Card>)cardRepository.findAll();
+        for (Card c : cards){
+            if(c.getId() == id){
+                return c;
+            }
+        }
+        return null;
+    }
+
+    public boolean canCardBeAccessed(String token, int cardId){
+        return canListBeAccessed(token, findListById(findCardById(cardId).getList_id()).getId());
     }
 
     @PostMapping("/userByToken")
@@ -308,6 +328,7 @@ public class DataController {
         if (canTableBeAccessed(token,Integer.valueOf(message.getParam1()))){
             TrelloList list = new TrelloList(message.getParam2(),Integer.valueOf(message.getParam1()));
             trelloListRepository.save(list);
+            return new Response(false,"dodano","");
         }return new Response(false,"","user nie ma dostepu do tablicy");
     }//tableId, listName
 
@@ -324,6 +345,12 @@ public class DataController {
         }
         return new Response(false,"","user cannot access given list");
     }//listId
+
+    public void deleteList(int id){
+        for (TrelloList tl : (ArrayList<TrelloList>)trelloListRepository.findAll()){
+            trelloListRepository.delete(tl);
+        }
+    }
 
     @PutMapping("/list/changeName")
     public Response changeListName(@RequestHeader String token,@RequestBody Message message){
@@ -348,12 +375,54 @@ public class DataController {
     }//table_id
 
 
+     @PostMapping("/getTableWithContentById")
+     public Table2 getTableWithContentById(@RequestHeader String token, @RequestBody ShortMessage tableId){
+        if (!(canTableBeAccessed(token, Integer.valueOf(tableId.getParam1())))){
+            return null;
+        }
+        Table2 tableToReturn = new Table2(findTableById( Integer.valueOf(tableId.getParam1()) ));
+        for (TrelloList tl : trelloListRepository.findAll()){
+            if (tl.getTable_id() == Integer.valueOf(tableId.getParam1())){
+                tableToReturn.lists.add(new List2(tl));
+                logger.info("qweqwe");
+            }
+        }
+/*
+        for (List2 list2 : tableToReturn.lists ){
+            for (Card c : cardRepository.findAll()){
+                if (c.getList_id() == list2.getId()){
+                    list2.cards.add(c);
+                }
+            }
+        }
+
+       */
+        return tableToReturn;
+     }
+
+
+
+
+    @PostMapping("/card/add")
+    public Response addCard(@RequestHeader String token, @RequestBody Message message){
+        User user = findUserByToken(token);
+        if(user == null){
+            return new Response(false,"","no user found");
+        }
+        if (canCardBeAccessed(token,Integer.valueOf(message.getParam1()))){
+            Card card = new Card(message.getParam2(),Integer.valueOf(message.getParam1()));
+        }
+        return new Response(false,"","user cannot access table");
+
+    }//listId cardName
+
+
     //TODO edycja nazwy karty
     //TODO dodawanie daty do karty
     //TODO udostepnianie tablicy?
-    //TODO dodawanie karty
     //TODO usuwanie karty
     //TODO zmiana nazwy karty
+    //TODO naprawić  /getTableWithContentById bo nie dodaje kart
 
 }
 
