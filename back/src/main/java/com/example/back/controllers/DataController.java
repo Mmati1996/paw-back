@@ -384,7 +384,6 @@ public class DataController {
         for (TrelloList tl : trelloListRepository.findAll()){
             if (tl.getTable_id() == Integer.valueOf(tableId.getParam1())){
                 tableToReturn.lists.add(new List2(tl));
-                logger.info("qweqwe");
             }
         }
 /*
@@ -401,8 +400,6 @@ public class DataController {
      }
 
 
-
-
     @PostMapping("/card/add")
     public Response addCard(@RequestHeader String token, @RequestBody Message message){
         User user = findUserByToken(token);
@@ -416,12 +413,33 @@ public class DataController {
 
     }//listId cardName
 
+    @PostMapping("/card/delete")
+    public Response deleteCard(@RequestHeader String token, @RequestBody ShortMessage message){
+        if (canCardBeAccessed(token,Integer.valueOf(message.getParam1()))){
+            ArrayList<Card> cards = (ArrayList<Card>) cardRepository.findAll();
+            for (Card c : cards){
+                if (c.getId() == Integer.valueOf(message.getParam1())){
+                    cardRepository.delete(c);
+                    return new Response(true,"card deleted","");
+                }
+            }
+        }
+        return new Response (false,"","user cannot access it");
+    }//listId
 
-    //TODO edycja nazwy karty
+    @PostMapping("/card/changeName")
+    public Response changeCardName (@RequestHeader String token, @RequestBody Message message){
+        if(canCardBeAccessed(token,Integer.valueOf(message.getParam1()))){
+            Card card = findCardById(Integer.valueOf(message.getParam1()));
+            card.setName(message.getParam2());
+            cardRepository.save(card);
+            return new Response(false,"changed card name to "+message.getParam2(),"");
+        }return new Response(false,"","can't access given card");
+    }//cardId cardNewName
+
+
     //TODO dodawanie daty do karty
-    //TODO udostepnianie tablicy?
-    //TODO usuwanie karty
-    //TODO zmiana nazwy karty
+    //TODO udostepnianie tablicy
     //TODO naprawić  /getTableWithContentById bo nie dodaje kart
 
 }
