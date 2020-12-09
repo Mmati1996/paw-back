@@ -457,8 +457,15 @@ public class DataController {
         return new Response(false,"","you cannot access this card");
     }//cardId  date
 
-
-    //TODO dodawanie daty do karty
+    @GetMapping("/cards/all")
+    public Iterable<Card> getAllCards(){
+        ArrayList<Card> cards = new ArrayList<>();
+        for (Card c : cardRepository.findAll()){
+            cards.add(c);
+        }
+        return cards;
+    }
+    
     //TODO udostepnianie tablicy
     //TODO naprawić  /getTableWithContentById bo nie dodaje kart
 
