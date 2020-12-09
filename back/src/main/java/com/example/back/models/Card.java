@@ -18,7 +18,6 @@ public class Card {
     int id;
     String name;
     int list_id;
-    //Timestamp date;
     public Date date;
 
 

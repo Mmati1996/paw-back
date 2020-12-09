@@ -384,16 +384,16 @@ public class DataController {
                 tableToReturn.lists.add(new List2(tl));
             }
         }
-/*
+
         for (List2 list2 : tableToReturn.lists ){
             for (Card c : cardRepository.findAll()){
                 if (c.getList_id() == list2.getId()){
-                    list2.cards.add(c);
+                    list2.cards.add(new Card2(c));
                 }
             }
         }
 
-       */
+
         return tableToReturn;
      }
 
