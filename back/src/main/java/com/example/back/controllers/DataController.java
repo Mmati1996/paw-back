@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.SecureRandom;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Base64;
 
@@ -301,7 +302,6 @@ public class DataController {
         return null;
     }
 
-    //TODO do zmiany (chyba?) nie chcemy przyjmować nazwy tylko id
     @PostMapping("/tables/getByName")
     public Table getTableByName(@RequestBody ShortMessage message){
         for (Table tab : tableRepository.findAll()){
@@ -312,7 +312,6 @@ public class DataController {
         }
         return null;
     }
-
 
     @GetMapping("/trelloLists/all")
     public Iterable<TrelloList> getAllLists(){
@@ -374,7 +373,6 @@ public class DataController {
         return toReturn;
     }//table_id
 
-
      @PostMapping("/getTableWithContentById")
      public Table2 getTableWithContentById(@RequestHeader String token, @RequestBody ShortMessage tableId){
         if (!(canTableBeAccessed(token, Integer.valueOf(tableId.getParam1())))){
@@ -398,7 +396,6 @@ public class DataController {
        */
         return tableToReturn;
      }
-
 
      @GetMapping("/cards/list")
      public Iterable<Card> listCards(@RequestParam int id){
@@ -447,6 +444,18 @@ public class DataController {
             return new Response(false,"changed card name to "+message.getParam2(),"");
         }return new Response(false,"","can't access given card");
     }//cardId cardNewName
+
+    @PostMapping("/card/setDate")
+    public Response setCardDate(@RequestHeader String token,@RequestBody Message message){
+        if (canCardBeAccessed(token,Integer.valueOf(message.getParam1()))){
+            Card card = findCardById(Integer.valueOf(message.getParam1()));
+            String tab[] = message.getParam2().split("-");
+            card.date = new Date(Integer.valueOf(tab[0])-1901,Integer.valueOf(tab[1])+11,Integer.valueOf(tab[2]));
+            cardRepository.save(card);
+            return new Response(true,"date set","");
+        }
+        return new Response(false,"","you cannot access this card");
+    }//cardId  date
 
 
     //TODO dodawanie daty do karty

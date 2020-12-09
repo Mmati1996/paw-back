@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.sql.Date;
 
 @Data
 @Entity
@@ -17,9 +18,8 @@ public class Card {
     int id;
     String name;
     int list_id;
-    int year;
-    int month;
-    int day;
+    //Timestamp date;
+    public Date date;
 
 
     // == constructors ==
@@ -27,22 +27,16 @@ public class Card {
         this.id = id;
         this.name = name;
         this.list_id = list_id;
-        year=0;
-        month=0;
-        day=0;
+        date = null;
     }
 
     public Card(String name, int list_id) {
         this.name = name;
         this.list_id = list_id;
-        year=0;
-        month=0;
-        day=0;
+        date = null;
     }
 
     public Card() {
-        year=0;
-        month=0;
-        day=0;
+        date = null;
     }
 }
