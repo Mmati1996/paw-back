@@ -465,9 +465,8 @@ public class DataController {
         }
         return cards;
     }
-    
+
     //TODO udostepnianie tablicy
-    //TODO naprawić  /getTableWithContentById bo nie dodaje kart
 
 }
 
