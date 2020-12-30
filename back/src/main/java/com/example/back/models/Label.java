@@ -16,22 +16,19 @@ public class Label {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
     String name;
-    ArrayList<Integer> cards;
 
     // == constructors ==
     public Label(int id, String name, ArrayList<Integer> cards) {
         this.id = id;
         this.name = name;
-        this.cards = cards;
     }
 
     public Label(String name, ArrayList<Integer> cards) {
         this.name = name;
-        this.cards = cards;
     }
 
     public Label() {
     }
 
-    
+
 }
