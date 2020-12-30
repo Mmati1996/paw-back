@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.util.ArrayList;
 
 @Data
 @Entity
@@ -19,12 +18,12 @@ public class Label {
     String name;
 
     // == constructors ==
-    public Label(int id, String name, ArrayList<Integer> cards) {
+    public Label(int id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public Label(String name, ArrayList<Integer> cards) {
+    public Label(String name) {
         this.name = name;
     }
 

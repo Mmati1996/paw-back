@@ -26,6 +26,8 @@ public class DataController {
     IdsRepository idRepository;
     TrelloListRepository trelloListRepository;
     CardRepository cardRepository;
+    LabelRepository labelRepository;
+    LabelIdRepository labelIdRepository;
     final static Logger logger = LoggerFactory.getLogger(DataController.class);
 
 
@@ -34,13 +36,15 @@ public class DataController {
 
     private UserServiceImpl userService;
 
-    public DataController(UserServiceImpl service, UserRepository userRepository, TableRepository tableRepository,IdsRepository idRepository,TrelloListRepository trelloListRepository, CardRepository cardRepository) {
+    public DataController(UserServiceImpl service, UserRepository userRepository, TableRepository tableRepository,IdsRepository idRepository,TrelloListRepository trelloListRepository, CardRepository cardRepository, LabelRepository labelRepository, LabelIdRepository labelIdRepository) {
         this.userService = service;
         this.userRepository = userRepository;
         this.tableRepository = tableRepository;
         this.idRepository = idRepository;
         this.trelloListRepository = trelloListRepository;
         this.cardRepository = cardRepository;
+        this.labelRepository = labelRepository;
+        this.labelIdRepository = labelIdRepository;
     }
 
 
@@ -465,6 +469,23 @@ public class DataController {
         }
         return cards;
     }
+
+    @PostMapping("/label/add")
+    public Response addLabel(@RequestHeader String token, @RequestBody Message msg){
+        User user = findUserByToken(token);
+
+        if (canCardBeAccessed(token,Integer.valueOf(msg.getParam1()))){
+            if(user != null){
+                Label label = new Label(msg.getParam2());
+                labelRepository.save(label);
+                labelIdRepository.save(new LabelId(user.getId(),label.getId()));
+                return new Response (true,"label added, id = "+label.getId(),"");
+            }
+
+
+        }
+        return new Response(false,"","can't access card");
+    }//cardId labelName
 
     //TODO udostepnianie tablicy
 
