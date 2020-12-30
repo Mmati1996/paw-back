@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 @Data
 @Entity
+@javax.persistence.Table(name="etykiety")
 public class Label {
 
     @Id
