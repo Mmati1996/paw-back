@@ -491,23 +491,23 @@ public class DataController {
     }
 
     @GetMapping("/tasks/getById")
-    public Task getTaskById(@RequestBody ShortMessage msg){
+    public Task2 getTaskById(@RequestBody ShortMessage msg){
         for (Task t : taskRepository.findAll()){
             if (Integer.valueOf(msg.getParam1()) == t.getId()){
-                return  t;
+                return  new Task2(t);
             }
         }
         return null;
     }
 
     @PostMapping("/tasks/add")
-    public Task addTasks(@RequestHeader String token, @RequestBody Message msg){
+    public Task2 addTasks(@RequestHeader String token, @RequestBody Message msg){
         User user = findUserByToken(token);
         if (user == null){
             return null;
         }
         Task task = new Task (msg.getParam1(),false,Integer.valueOf(msg.getParam2()));
-        return task;
+        return new Task2(task);
     }//title card_id
 
     @PostMapping("/tasks/delete")
