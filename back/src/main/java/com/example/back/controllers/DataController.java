@@ -480,23 +480,6 @@ public class DataController {
         return cards;
     }
 
-    @PostMapping("/label/add")
-    public Response addLabel(@RequestHeader String token, @RequestBody Message msg){
-        User user = findUserByToken(token);
-
-        if (canCardBeAccessed(token,Integer.valueOf(msg.getParam1()))){
-            if(user != null){
-                Label label = new Label(msg.getParam2());
-                labelRepository.save(label);
-                labelIdRepository.save(new LabelId(user.getId(),label.getId()));
-                return new Response (true,"label added, id = "+label.getId(),"");
-            }
-
-
-        }
-        return new Response(false,"","can't access card");
-    }//cardId labelName
-
     @GetMapping("/cards/getById")
     public Card getCardById(@RequestBody ShortMessage msg){
         for (Card c : cardRepository.findAll()){
@@ -527,8 +510,78 @@ public class DataController {
         return task;
     }//title card_id
 
+    @PostMapping("/tasks/delete")
+    public Response deleteTask(@RequestHeader String token, @RequestBody ShortMessage msg){
+
+        if(! (canCardBeAccessed(token,findCardById(Integer.valueOf(msg.getParam1())).getList_id())) )  {
+            return new Response(false,"","couldn't delete task");
+        }
+
+        ArrayList<Task> tasks = (ArrayList<Task>) taskRepository.findAll();
+        for (Task t : tasks){
+            if (t.getId() == Integer.valueOf(msg.getParam1())){
+                taskRepository.delete(t);
+                return new Response(true,"task deleted succesfully","");
+            }
+
+        }
+        return new Response(false,"","couldn't delete task");
+    }//task_id
 
 
+    @PostMapping("/label/add")
+    public Label addLabel(@RequestHeader String token, @RequestBody Message msg){
+        User user = findUserByToken(token);
+
+        if (canCardBeAccessed(token,Integer.valueOf(msg.getParam1()))){
+            if(user != null){
+                Label label = new Label(msg.getParam2());
+                labelRepository.save(label);
+                labelIdRepository.save(new LabelId(user.getId(),label.getId()));
+                return label;
+            }
+
+
+        }
+        return null;
+    }//cardId labelName
+
+    @PostMapping("/label/changeName")
+    public Response changeLabelName(@RequestHeader String token, @RequestBody Message msg){
+        for (Label labels : labelRepository.findAll()){
+           if (labels.getId() == Integer.valueOf(msg.getParam1())){
+               labels.setName(msg.getParam2());
+               labelRepository.save(labels);
+               return new Response(true,"changed name","");
+           }
+        }
+        return new Response(false,"","couldn't change name");
+    }//label_id, new_label_name
+
+    @PostMapping("/label/delete")
+    public Response deleteLabel(@RequestHeader String token, @RequestBody ShortMessage msg){
+        for (LabelId ids : labelIdRepository.findAll()){
+            if (ids.getLabelId() == Integer.valueOf(msg.getParam1())){
+                labelIdRepository.delete(ids);
+            }
+        }
+        for (Label labels : labelRepository.findAll()){
+            if (labels.getId() == Integer.valueOf(msg.getParam1())){
+                labelRepository.delete(labels);
+                return new Response(true,"deleted","");
+            }
+        }
+        return new Response(true,"","couldn't delete");
+    }//labelId
+
+    @PostMapping("/label/addToCard")
+    public Response addLabelToCard(@RequestBody String token, @RequestBody Message msg){
+        if  (!(canCardBeAccessed(token, Integer.valueOf(msg.getParam1())))){
+            return new Response(false,"","failed to access card");
+        }
+        LabelId id = new LabelId(Integer.valueOf(msg.getParam2()),Integer.valueOf(msg.getParam1()));
+        return  new Response(true,"added label to card","");
+    }//cardId, labelId
 
     //TODO udostepnianie tablicy
 
