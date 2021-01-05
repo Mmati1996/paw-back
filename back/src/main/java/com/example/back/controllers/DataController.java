@@ -28,6 +28,7 @@ public class DataController {
     CardRepository cardRepository;
     LabelRepository labelRepository;
     LabelIdRepository labelIdRepository;
+    TaskRepository taskRepository;
     final static Logger logger = LoggerFactory.getLogger(DataController.class);
 
 
@@ -36,7 +37,7 @@ public class DataController {
 
     private UserServiceImpl userService;
 
-    public DataController(UserServiceImpl service, UserRepository userRepository, TableRepository tableRepository,IdsRepository idRepository,TrelloListRepository trelloListRepository, CardRepository cardRepository, LabelRepository labelRepository, LabelIdRepository labelIdRepository) {
+    public DataController(UserServiceImpl service, UserRepository userRepository, TableRepository tableRepository,IdsRepository idRepository,TrelloListRepository trelloListRepository, CardRepository cardRepository, LabelRepository labelRepository, LabelIdRepository labelIdRepository, TaskRepository taskRepository) {
         this.userService = service;
         this.userRepository = userRepository;
         this.tableRepository = tableRepository;
@@ -45,6 +46,7 @@ public class DataController {
         this.cardRepository = cardRepository;
         this.labelRepository = labelRepository;
         this.labelIdRepository = labelIdRepository;
+        this.taskRepository = taskRepository;
     }
 
 
@@ -397,6 +399,16 @@ public class DataController {
             }
         }
 
+        for(List2 list2 : tableToReturn.lists){
+            for (Card2 c : list2.getCards()){
+                for (Task task : taskRepository.findAll()){
+                    if (task.getCardId()==c.getId()){
+                        c.tasks.add(new Task2(task));
+                    }
+
+                }
+            }
+        }
 
         return tableToReturn;
      }

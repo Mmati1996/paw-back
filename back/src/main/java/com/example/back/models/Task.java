@@ -17,19 +17,23 @@ public class Task {
     int id;
     String title;
     boolean isDone;
+    int cardId;
 
     // == constructors ==
-    public Task(int id, String title, boolean isDone) {
+    public Task(int id, String title, boolean isDone, int cardId) {
         this.id = id;
         this.title = title;
         this.isDone = isDone;
+        this.cardId = cardId;
     }
 
-    public Task(String title, boolean isDone) {
+    public Task(String title, boolean isDone, int cardId) {
         this.title = title;
         this.isDone = isDone;
+        this.cardId = cardId;
     }
 
     public Task() {
     }
+
 }
