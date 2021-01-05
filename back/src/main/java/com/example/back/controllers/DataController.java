@@ -430,9 +430,7 @@ public class DataController {
         if(user == null){
             return new Response(false,"","no user found");
         }
-        if (canCardBeAccessed(token,Integer.valueOf(message.getParam1()))){
             Card card = new Card(message.getParam2(),Integer.valueOf(message.getParam1()));
-        }
         return new Response(false,"","user cannot access table");
 
     }//listId cardName
@@ -498,6 +496,39 @@ public class DataController {
         }
         return new Response(false,"","can't access card");
     }//cardId labelName
+
+    @GetMapping("/cards/getById")
+    public Card getCardById(@RequestBody ShortMessage msg){
+        for (Card c : cardRepository.findAll()){
+            if (Integer.valueOf(msg.getParam1()) == c.getId()){
+                return c;
+            }
+        }
+        return null;
+    }
+
+    @GetMapping("/tasks/getById")
+    public Task getTaskById(@RequestBody ShortMessage msg){
+        for (Task t : taskRepository.findAll()){
+            if (Integer.valueOf(msg.getParam1()) == t.getId()){
+                return  t;
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/tasks/add")
+    public Task addTasks(@RequestHeader String token, @RequestBody Message msg){
+        User user = findUserByToken(token);
+        if (user == null){
+            return null;
+        }
+        Task task = new Task (msg.getParam1(),false,Integer.valueOf(msg.getParam2()));
+        return task;
+    }//title card_id
+
+
+
 
     //TODO udostepnianie tablicy
 
