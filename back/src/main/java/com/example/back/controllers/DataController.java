@@ -384,6 +384,7 @@ public class DataController {
         if (!(canTableBeAccessed(token, Integer.valueOf(tableId.getParam1())))){
             return null;
         }
+
         Table2 tableToReturn = new Table2(findTableById( Integer.valueOf(tableId.getParam1()) ));
         for (TrelloList tl : trelloListRepository.findAll()){
             if (tl.getTable_id() == Integer.valueOf(tableId.getParam1())){
@@ -399,16 +400,17 @@ public class DataController {
             }
         }
 
-        for(List2 list2 : tableToReturn.lists){
-            for (Card2 c : list2.getCards()){
-                for (Task task : taskRepository.findAll()){
-                    if (task.getCardId()==c.getId()){
-                        c.tasks.add(new Task2(task));
-                    }
 
-                }
-            }
-        }
+//        for(List2 list2 : tableToReturn.lists){
+//            for (Card2 c : list2.getCards()){
+//                for (Task task : taskRepository.findAll()){
+//                    if (task.getCardId()==c.getId()){
+//                        c.tasks.add(new Task2(task));
+//                    }
+//
+//                }
+//            }
+//        }
 
         return tableToReturn;
      }
