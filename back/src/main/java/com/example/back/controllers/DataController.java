@@ -587,6 +587,10 @@ public class DataController {
 
     @PostMapping("/cards/modify")
     public Response modifyCard(@RequestHeader String token, @RequestBody CardModifier cm){
+        if (1==1)
+        {
+            return new Response(true,"daniel jezeli to widzisz to mi powiedz!","daniel jezeli to widzisz to mi powiedz!");
+        }
             for (Task t : taskRepository.findAll()){
                 if(t.getId() == cm.getParam2()){
                     taskRepository.delete(t);
