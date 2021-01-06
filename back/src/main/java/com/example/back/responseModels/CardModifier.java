@@ -7,6 +7,6 @@ import java.util.List;
 
 
 public class CardModifier {
-    List<Task2> param1;
-    int param2;
+    public List<Task2> param1;
+    public int param2;
 }

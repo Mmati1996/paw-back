@@ -586,17 +586,16 @@ public class DataController {
     }//cardId, labelId
 
     @PostMapping("/cards/modify")
-    public String modifyCard(@RequestHeader String token, @RequestBody CardModifier cm){
-//            for (Task t : taskRepository.findAll()){
-//                if(t.getId() == cm.getParam2()){
-//                    taskRepository.delete(t);
-//                }
-//            }
-//            for (Task2 t : cm.getParam1()){
-//                taskRepository.save(new Task(t,cm.getParam2()));
-//            }
-            return "string";
-            //return new Response(true,"card modified","");
+    public Response modifyCard(@RequestHeader String token, @RequestBody CardModifier cm){
+            for (Task t : taskRepository.findAll()){
+                if(t.getId() == cm.param2){
+                    taskRepository.delete(t);
+                }
+            }
+            for (Task2 t : cm.param1){
+                taskRepository.save(new Task(t,cm.param2));
+            }
+            return new Response(true,"card modified","");
     }
 
     //TODO udostepnianie tablicy
