@@ -575,13 +575,29 @@ public class DataController {
     }//labelId
 
     @PostMapping("/label/addToCard")
-    public Response addLabelToCard(@RequestBody String token, @RequestBody Message msg){
+    public Response addLabelToCard(@RequestHeader String token, @RequestBody Message msg){
         if  (!(canCardBeAccessed(token, Integer.valueOf(msg.getParam1())))){
             return new Response(false,"","failed to access card");
         }
         LabelId id = new LabelId(Integer.valueOf(msg.getParam2()),Integer.valueOf(msg.getParam1()));
         return  new Response(true,"added label to card","");
     }//cardId, labelId
+
+    @PostMapping("/cards/modify")
+    public Response modifyCard(@RequestHeader String token, @RequestBody CardModifier cm){
+        if (canCardBeAccessed(token,cm.getId())){
+            for (Task t : taskRepository.findAll()){
+                if(t.getId() == cm.getId()){
+                    taskRepository.delete(t);
+                }
+            }
+            for (Task2 t : cm.getTasks()){
+                taskRepository.save(new Task(t,cm.getId()));
+            }
+            return new Response(true,"card modified","");
+        }
+        return new Response(false,"","cannot access this card");
+    }
 
     //TODO udostepnianie tablicy
 
