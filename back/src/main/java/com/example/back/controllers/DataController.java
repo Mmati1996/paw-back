@@ -457,7 +457,7 @@ public class DataController {
             Card card = findCardById(Integer.valueOf(message.getParam1()));
             card.setName(message.getParam2());
             cardRepository.save(card);
-            return new Response(false,"changed card name to "+message.getParam2(),"");
+            return new Response(true,"changed card name to "+message.getParam2(),"");
         }return new Response(false,"","can't access given card");
     }//cardId cardNewName
 
