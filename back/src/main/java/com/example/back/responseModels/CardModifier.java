@@ -8,6 +8,6 @@ import java.util.ArrayList;
 
 @Data
 public class CardModifier {
-    ArrayList<Task2> tasks;
-    int id;
+    ArrayList<Task2> param1;
+    int param2;
 }

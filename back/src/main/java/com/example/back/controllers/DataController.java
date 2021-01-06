@@ -585,14 +585,14 @@ public class DataController {
 
     @PostMapping("/cards/modify")
     public Response modifyCard(@RequestHeader String token, @RequestBody CardModifier cm){
-        if (canCardBeAccessed(token,cm.getId())){
+        if (canCardBeAccessed(token,cm.getParam2())){
             for (Task t : taskRepository.findAll()){
-                if(t.getId() == cm.getId()){
+                if(t.getId() == cm.getParam2()){
                     taskRepository.delete(t);
                 }
             }
-            for (Task2 t : cm.getTasks()){
-                taskRepository.save(new Task(t,cm.getId()));
+            for (Task2 t : cm.getParam1()){
+                taskRepository.save(new Task(t,cm.getParam2()));
             }
             return new Response(true,"card modified","");
         }
