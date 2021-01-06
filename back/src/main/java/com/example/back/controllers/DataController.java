@@ -587,7 +587,6 @@ public class DataController {
 
     @PostMapping("/cards/modify")
     public Response modifyCard(@RequestHeader String token, @RequestBody CardModifier cm){
-        if (canCardBeAccessed(token,cm.getParam2())){
             for (Task t : taskRepository.findAll()){
                 if(t.getId() == cm.getParam2()){
                     taskRepository.delete(t);
@@ -597,8 +596,6 @@ public class DataController {
                 taskRepository.save(new Task(t,cm.getParam2()));
             }
             return new Response(true,"card modified","");
-        }
-        return new Response(false,"","cannot access this card");
     }
 
     //TODO udostepnianie tablicy

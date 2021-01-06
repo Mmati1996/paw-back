@@ -42,5 +42,4 @@ public class Task {
         this.isDone = task2.isDone();
         this.cardId = id;
     }
-
 }
