@@ -585,7 +585,7 @@ public class DataController {
         return  new Response(true,"added label to card","");
     }//cardId, labelId
 
-    @PostMapping("/cards/modify")
+    @PutMapping("/cards/modify")
     public Response modifyCard(@RequestHeader String token, @RequestBody CardModifier cm){
         if (1==1)
         {
