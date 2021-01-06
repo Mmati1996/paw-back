@@ -585,12 +585,8 @@ public class DataController {
         return  new Response(true,"added label to card","");
     }//cardId, labelId
 
-    @PutMapping("/cards/modify")
-    public Response modifyCard(@RequestHeader String token, @RequestBody CardModifier cm){
-        if (1==1)
-        {
-            return new Response(true,"daniel jezeli to widzisz to mi powiedz!","daniel jezeli to widzisz to mi powiedz!");
-        }
+    @PostMapping("/cards/modify")
+    public String modifyCard(@RequestHeader String token, @RequestBody CardModifier cm){
             for (Task t : taskRepository.findAll()){
                 if(t.getId() == cm.getParam2()){
                     taskRepository.delete(t);
@@ -599,7 +595,8 @@ public class DataController {
             for (Task2 t : cm.getParam1()){
                 taskRepository.save(new Task(t,cm.getParam2()));
             }
-            return new Response(true,"card modified","");
+            return "string";
+            //return new Response(true,"card modified","");
     }
 
     //TODO udostepnianie tablicy
