@@ -599,8 +599,6 @@ public class DataController {
             //return new Response(true,"card modified","");
     }
 
-    
-
     //TODO udostepnianie tablicy
 
 }
