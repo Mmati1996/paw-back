@@ -487,7 +487,7 @@ public class DataController {
         return cards;
     }
 
-    @GetMapping("/cards/getById")
+    @PostMapping("/cards/getById")
     public Card2 getCardById(@RequestBody idMsg msg){
         for (Card c : cardRepository.findAll()){
             if (Integer.valueOf(msg.getParam1()) == c.getId()){
