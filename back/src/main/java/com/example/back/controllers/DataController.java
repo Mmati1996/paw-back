@@ -488,7 +488,7 @@ public class DataController {
     }
 
     @GetMapping("/cards/getById")
-    public Card2 getCardById(@RequestBody ShortMessage msg){
+    public Card2 getCardById(@RequestBody idMsg msg){
         for (Card c : cardRepository.findAll()){
             if (Integer.valueOf(msg.getParam1()) == c.getId()){
                 Card2 toReturn = new Card2(c);
