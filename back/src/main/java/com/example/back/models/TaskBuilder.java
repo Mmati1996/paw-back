@@ -5,10 +5,15 @@ import lombok.Data;
 @Data
 public class TaskBuilder {
     String title;
-    int isDone;
+    boolean isDone;
 
     public Task buildTask(int cardId){
-            return new Task(this.title, this.isDone, cardId);
+        if (this.isDone){
+            return new Task(this.title,1, cardId);
+        }else{
+            return new Task(this.title,0, cardId);
+        }
+
 
 
     }
