@@ -37,9 +37,9 @@ public class Task {
     }
 
     public Task(Task2 task2, int id) {
-        this.id = task2.getId();
-        this.title = task2.getTitle();
-        this.isDone = task2.isDone();
+        this.id = task2.id;
+        this.title = task2.title;
+        this.isDone = task2.isDone;
         this.cardId = id;
     }
 }

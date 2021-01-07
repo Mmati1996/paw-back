@@ -13,6 +13,7 @@ import java.security.SecureRandom;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 
 @Slf4j
@@ -432,8 +433,13 @@ public class DataController {
         if(user == null){
             return new Response(false,"","no user found");
         }
+        //if (canCardBeAccessed(token,Integer.valueOf(message.getParam1()))){
             Card card = new Card(message.getParam2(),Integer.valueOf(message.getParam1()));
-        return new Response(false,"","user cannot access table");
+            cardRepository.save(card);
+            return new Response(true,"added","");
+        //}
+
+        //return new Response(false,"","user cannot access table");
 
     }//listId cardName
 
@@ -483,10 +489,16 @@ public class DataController {
     }
 
     @GetMapping("/cards/getById")
-    public Card getCardById(@RequestBody ShortMessage msg){
+    public Card2 getCardById(@RequestBody ShortMessage msg){
         for (Card c : cardRepository.findAll()){
             if (Integer.valueOf(msg.getParam1()) == c.getId()){
-                return c;
+                Card2 toReturn = new Card2(c);
+                for (Task t : taskRepository.findAll()){
+                    if (t.getCardId()== toReturn.getId()){
+                        toReturn.getTasks().add(new Task2(t));
+                    }
+                }
+                return toReturn;
             }
         }
         return null;
@@ -509,6 +521,7 @@ public class DataController {
             return null;
         }
         Task task = new Task (msg.getParam1(),false,Integer.valueOf(msg.getParam2()));
+        taskRepository.save(task);
         return new Task2(task);
     }//title card_id
 
@@ -586,17 +599,32 @@ public class DataController {
     }//cardId, labelId
 
     @PostMapping("/cards/modify")
-    public Response modifyCard(@RequestHeader String token, @RequestBody CardModifier cm){
-            for (Task t : taskRepository.findAll()){
-                if(t.getId() == cm.param2){
-                    taskRepository.delete(t);
-                }
-            }
-            for (Task2 t : cm.param1){
-                taskRepository.save(new Task(t,cm.param2));
-            }
-            return new Response(true,"card modified","");
+    public List<Task2> modifyCard(@RequestHeader String token, @RequestBody CardModifier cm){
+
+//            for (Task t : taskRepository.findAll()){
+//                if(t.getId() == cm.getParam2()){
+//                    taskRepository.delete(t);
+//                }
+//            }
+//            for (Task2 t : cm.getParam1()){
+//                taskRepository.save(new Task(t,cm.getParam2()));
+//            }
+            return cm.param1;
+            //return new Response(true,"card modified","");
     }
+
+    @PostMapping("/card/tasks")
+    public ArrayList<Task2> listTasks(@RequestHeader String token, @RequestBody ShortMessage msg){
+        ArrayList<Task2> toReturn = new ArrayList<>();
+        for (Task t : taskRepository.findAll()){
+            if (t.getCardId() == Integer.valueOf(msg.getParam1())){
+                toReturn.add(new Task2(t));
+            }
+        }
+        return toReturn;
+    }
+
+    //przyjumje id karty, odsylam liste kart
 
     //TODO udostepnianie tablicy
 
