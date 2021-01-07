@@ -9,6 +9,7 @@ public class Task2 {
     public Task2 (Task t){
         this.id = t.getId();
         this.title = t.getTitle();
+
         if (t.getIs_done() == 0){
             this.isDone = false;
         }else{
