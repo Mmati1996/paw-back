@@ -615,7 +615,7 @@ public class DataController {
             for (Task task : tasks){
                 taskRepository.save(task);
             }
-            return "qwe";
+            return "modified";
 
             //return new Response(true,"card modified","");
     }
