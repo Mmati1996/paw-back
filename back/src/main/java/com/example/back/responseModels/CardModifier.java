@@ -1,12 +1,13 @@
 package com.example.back.responseModels;
 
 
-import com.example.back.models.Task2;
+import com.example.back.models.TaskBuilder;
+import lombok.Data;
 
 import java.util.List;
 
-
+@Data
 public class CardModifier {
-    public List<Task2> param1;
-    public int param2;
+    public List<TaskBuilder> param1;
+    public String param2;
 }

@@ -13,7 +13,6 @@ import java.security.SecureRandom;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
 
 
 @Slf4j
@@ -39,7 +38,6 @@ public class DataController {
     private UserServiceImpl userService;
 
     public DataController(UserServiceImpl service, UserRepository userRepository, TableRepository tableRepository,IdsRepository idRepository,TrelloListRepository trelloListRepository, CardRepository cardRepository, LabelRepository labelRepository, LabelIdRepository labelIdRepository, TaskRepository taskRepository) {
-        this.userService = service;
         this.userRepository = userRepository;
         this.tableRepository = tableRepository;
         this.idRepository = idRepository;
@@ -48,6 +46,7 @@ public class DataController {
         this.labelRepository = labelRepository;
         this.labelIdRepository = labelIdRepository;
         this.taskRepository = taskRepository;
+        this.userService = service;
     }
 
 
@@ -405,7 +404,7 @@ public class DataController {
 //        for(List2 list2 : tableToReturn.lists){
 //            for (Card2 c : list2.getCards()){
 //                for (Task task : taskRepository.findAll()){
-//                    if (task.getCardId()==c.getId()){
+//                    if (task.getCard_id()==c.getId()){
 //                        c.tasks.add(new Task2(task));
 //                    }
 //
@@ -455,7 +454,7 @@ public class DataController {
             }
         }
         return new Response (false,"","user cannot access it");
-    }//cardId
+    }//card_id
 
     @PostMapping("/card/changeName")
     public Response changeCardName (@RequestHeader String token, @RequestBody Message message){
@@ -465,7 +464,7 @@ public class DataController {
             cardRepository.save(card);
             return new Response(true,"changed card name to "+message.getParam2(),"");
         }return new Response(false,"","can't access given card");
-    }//cardId cardNewName
+    }//card_id cardNewName
 
     @PostMapping("/card/setDate")
     public Response setCardDate(@RequestHeader String token,@RequestBody Message message){
@@ -477,7 +476,7 @@ public class DataController {
             return new Response(true,"date set","");
         }
         return new Response(false,"","you cannot access this card");
-    }//cardId  date
+    }//card_id  date
 
     @GetMapping("/cards/all")
     public Iterable<Card> getAllCards(){
@@ -494,7 +493,7 @@ public class DataController {
             if (Integer.valueOf(msg.getParam1()) == c.getId()){
                 Card2 toReturn = new Card2(c);
                 for (Task t : taskRepository.findAll()){
-                    if (t.getCardId()== toReturn.getId()){
+                    if (t.getCard_id()== toReturn.getId()){
                         toReturn.getTasks().add(new Task2(t));
                     }
                 }
@@ -520,7 +519,7 @@ public class DataController {
         if (user == null){
             return null;
         }
-        Task task = new Task (msg.getParam1(),false,Integer.valueOf(msg.getParam2()));
+        Task task = new Task (msg.getParam1(),0,Integer.valueOf(msg.getParam2()));
         taskRepository.save(task);
         return new Task2(task);
     }//title card_id
@@ -559,7 +558,7 @@ public class DataController {
 
         }
         return null;
-    }//cardId labelName
+    }//card_id labelName
 
     @PostMapping("/label/changeName")
     public Response changeLabelName(@RequestHeader String token, @RequestBody Message msg){
@@ -596,20 +595,28 @@ public class DataController {
         }
         LabelId id = new LabelId(Integer.valueOf(msg.getParam2()),Integer.valueOf(msg.getParam1()));
         return  new Response(true,"added label to card","");
-    }//cardId, labelId
+    }//card_id, labelId
 
     @PostMapping("/cards/modify")
-    public List<Task2> modifyCard(@RequestHeader String token, @RequestBody CardModifier cm){
+    public String modifyCard(@RequestHeader String token, @RequestBody CardModifier cm){
 
-//            for (Task t : taskRepository.findAll()){
-//                if(t.getId() == cm.getParam2()){
-//                    taskRepository.delete(t);
-//                }
-//            }
-//            for (Task2 t : cm.getParam1()){
-//                taskRepository.save(new Task(t,cm.getParam2()));
-//            }
-            return cm.param1;
+
+            for (Task t : taskRepository.findAll()){
+                if(t.getCard_id() == Integer.valueOf(cm.getParam2())){
+                    taskRepository.delete(t);
+                }
+            }
+            ArrayList<Task> tasks= new ArrayList<Task>();
+            ArrayList<Task2> t= new ArrayList<Task2>();
+            for (TaskBuilder builders : cm.getParam1()){
+                tasks.add( builders.buildTask(Integer.valueOf(cm.param2)) );
+                t.add(new Task2(builders.buildTask(Integer.valueOf(cm.param2))));
+            }
+            for (Task task : tasks){
+                taskRepository.save(task);
+            }
+            return "qwe";
+
             //return new Response(true,"card modified","");
     }
 
@@ -617,7 +624,7 @@ public class DataController {
     public ArrayList<Task2> listTasks(@RequestHeader String token, @RequestBody ShortMessage msg){
         ArrayList<Task2> toReturn = new ArrayList<>();
         for (Task t : taskRepository.findAll()){
-            if (t.getCardId() == Integer.valueOf(msg.getParam1())){
+            if (t.getCard_id() == Integer.valueOf(msg.getParam1())){
                 toReturn.add(new Task2(t));
             }
         }

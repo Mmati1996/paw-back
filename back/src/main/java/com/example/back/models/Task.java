@@ -16,21 +16,21 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
     String title;
-    boolean isDone;
-    int cardId;
+    int is_done;
+    int card_id;
 
     // == constructors ==
-    public Task(int id, String title, boolean isDone, int cardId) {
+    public Task(int id, String title, int is_done, int card_id) {
         this.id = id;
         this.title = title;
-        this.isDone = isDone;
-        this.cardId = cardId;
+        this.is_done = is_done;
+        this.card_id = card_id;
     }
 
-    public Task(String title, boolean isDone, int cardId) {
+    public Task(String title, int is_done, int card_id) {
         this.title = title;
-        this.isDone = isDone;
-        this.cardId = cardId;
+        this.is_done = is_done;
+        this.card_id = card_id;
     }
 
     public Task() {
@@ -39,7 +39,7 @@ public class Task {
     public Task(Task2 task2, int id) {
         this.id = task2.id;
         this.title = task2.title;
-        this.isDone = task2.isDone;
-        this.cardId = id;
+        this.is_done = task2.isDone;
+        this.card_id = id;
     }
 }
