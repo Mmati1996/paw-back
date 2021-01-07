@@ -9,5 +9,5 @@ import java.util.List;
 @Data
 public class CardModifier {
     public List<TaskBuilder> param1;
-    public String param2;
+    public int param2;
 }
