@@ -39,7 +39,11 @@ public class Task {
     public Task(Task2 task2, int id) {
         this.id = task2.id;
         this.title = task2.title;
-        this.is_done = task2.isDone;
+        if (task2.isDone){
+            this.is_done = 1;
+        }else{
+            this.is_done = 0;
+        }
         this.card_id = id;
     }
 }
